@@ -4,17 +4,18 @@ import {FilterValuesType} from './App';
 type TodoListPropsType = {
     title: string
     tasks: Array<TaskType>
-    removeTask: (taskId: number) => void
+    removeTask: (taskId: string) => void
     changeFilter: (nextFilterValue: FilterValuesType) => void
+    addTask: (title: string) => void
 }
 
 export type TaskType = {
-    id: number
+    id: string
     title: string
     isDone: boolean
 }
 
-const Todolist: FC<TodoListPropsType> = ({title, tasks, removeTask, changeFilter}) => {
+const Todolist: FC<TodoListPropsType> = ({title, tasks, removeTask, changeFilter, addTask}) => {
 
 
     // проходим по массиву заданий и рисуем их
@@ -43,7 +44,7 @@ const Todolist: FC<TodoListPropsType> = ({title, tasks, removeTask, changeFilter
                 <h3>{title}</h3>
                 <div>
                     <input/>
-                    <button>+</button>
+                    <button onClick={() => addTask("New task")}>+</button>
                 </div>
                 {tasksList}
                 <div>
