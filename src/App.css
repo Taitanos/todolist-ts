@@ -1,7 +1,7 @@
 .App {
   padding: 30px;
   display: flex;
-  background-color: blanchedalmond;
+  background-color: darkgrey;
   height: 100vh;
 }
 
@@ -11,7 +11,7 @@
 
 .todolist {
   border: 2px solid gray;
-  background-color: antiquewhite;
+  background-color: cadetblue;
   border-radius: 5px;
   padding: 15px;
   height: max-content;

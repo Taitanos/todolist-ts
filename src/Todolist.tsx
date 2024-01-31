@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useState} from 'react';
 import {FilterValuesType} from './App';
 
 type TodoListPropsType = {
@@ -17,6 +17,7 @@ export type TaskType = {
 
 const Todolist: FC<TodoListPropsType> = ({title, tasks, removeTask, changeFilter, addTask}) => {
 
+    const [newTaskTitle, setNewTaskTitle] = useState('')
 
     // проходим по массиву заданий и рисуем их
     const listItems: Array<JSX.Element> = tasks.map(t => {
@@ -38,13 +39,41 @@ const Todolist: FC<TodoListPropsType> = ({title, tasks, removeTask, changeFilter
         : <span>Your taskList is empty</span>
 
 
+    // Функции
+    const onClickAddTask = () => {
+        addTask(newTaskTitle)
+        setNewTaskTitle('')
+    }
+
+    const onChangeSetNewTitle = (e: React.ChangeEvent<HTMLInputElement>) => setNewTaskTitle(e.target.value)
+
+    const onKeyDownAddTask = (e: React.KeyboardEvent<HTMLInputElement>) => e.key === 'Enter' && onClickAddTask()
+
+    const isAddBtnDisabled = !newTaskTitle || newTaskTitle.length >= 15
+
+    const userMessage = newTaskTitle.length < 15
+        ? <span>Enter new title</span>
+        : <span style={{color: 'red'}}>Your title is too long</span>
+
+
     return (
         <div>
             <div className="todolist">
                 <h3>{title}</h3>
                 <div>
-                    <input/>
-                    <button onClick={() => addTask("New task")}>+</button>
+                    <input
+                        value={newTaskTitle}
+                        onChange={onChangeSetNewTitle}
+                        onKeyDown={onKeyDownAddTask}
+                    />
+                    <button
+                        disabled={isAddBtnDisabled}
+                        onClick={onClickAddTask}
+                    >+
+                    </button>
+                    <div>
+                        {userMessage}
+                    </div>
                 </div>
                 {tasksList}
                 <div>

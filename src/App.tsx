@@ -19,7 +19,7 @@ function App() {
 
     // Функции
     const removeTask = (taskId: string) => {
-        setTasks(tasks.filter(t => t.id != taskId))
+        setTasks(tasks.filter(t => t.id !== taskId))
     }
 
     // Функция по созданию задачи
