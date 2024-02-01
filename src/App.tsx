@@ -22,12 +22,14 @@ function App() {
         setTasks(tasks.filter(t => t.id !== taskId))
     }
 
-    // Функция по созданию задачи
     const addTask = (title: string) => {
         setTasks([...tasks, {id: crypto.randomUUID(), title, isDone: false,}])
     }
 
-    // Функции для фильтра задач по готовности
+    const changeFilter = (newFilterValue: FilterValuesType) => {
+        setFilter(newFilterValue)
+    }
+
     const getFilteredTasksForRender = (allTask: Array<TaskType>, filterValue: FilterValuesType): Array<TaskType> => {
         switch (filterValue) {
             case 'active':
@@ -39,11 +41,17 @@ function App() {
         }
     }
 
-    const changeFilter = (newFilterValue: FilterValuesType) => {
-        setFilter(newFilterValue)
+    const filteredTasksForRender: Array<TaskType> = getFilteredTasksForRender(tasks, filter)
+
+    const changeTaskStatus = (taskId: string, newIsDoneValue: boolean) => {
+        const updateTask: Array<TaskType> = tasks.map(t => t.id === taskId
+        ? {...t, isDone: newIsDoneValue}
+        : t
+        )
+        setTasks(updateTask)
     }
 
-    const filteredTasksForRender: Array<TaskType> = getFilteredTasksForRender(tasks, filter)
+    const changeTaskTitle = () => {}
 
 
     return (
@@ -54,6 +62,7 @@ function App() {
                 removeTask={removeTask}
                 changeFilter={changeFilter}
                 addTask={addTask}
+                changeTaskStatus={changeTaskStatus}
             />
 
         </div>
