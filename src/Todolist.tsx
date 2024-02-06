@@ -1,5 +1,6 @@
-import React, {FC, useState} from 'react';
+import React, {FC} from 'react';
 import {FilterValuesType} from './App';
+import AddItemForm from './AddItemForm';
 
 type TodoListPropsType = {
     todoListId: string
@@ -33,10 +34,6 @@ const Todolist: FC<TodoListPropsType> = ({
                                              //changeTaskTitle
                                          }) => {
 
-    const [newTaskTitle, setNewTaskTitle] = useState('')
-    const [inputError, setInputError] = useState(false)
-
-
 
     // проходим по массиву заданий и рисуем их
     const listItems: Array<JSX.Element> = tasks.map(t => {
@@ -64,32 +61,11 @@ const Todolist: FC<TodoListPropsType> = ({
 
 
     // Функции
-    const onClickAddTask = () => {
-        addTask(todoListId, newTaskTitle)
-        setNewTaskTitle('')
-    }
-
-    const onChangeSetNewTaskTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const trimmedTitle = e.target.value.trim()
-        if (trimmedTitle || e.target.value.length === 0) {
-            inputError && setInputError(false)
-            setNewTaskTitle(trimmedTitle)
-        } else {
-            setInputError(true)
-        }
-    }
-
-    const onKeyDownAddTask = (e: React.KeyboardEvent<HTMLInputElement>) => e.key === 'Enter' && onClickAddTask()
-    const isAddBtnDisabled = !newTaskTitle || newTaskTitle.length >= 15
-
-    const userMessage = inputError
-        ? <span style={{color: 'red'}}>Your title is too empty</span>
-        : newTaskTitle.length < 15
-            ? <span>Enter new title</span>
-            : <span style={{color: 'red'}}>Your title is too long</span>
-
     const removeTodolistHandler = () => removeTodolist(todoListId)
 
+    const addTaskHandler = (newTaskTitle:string) => {
+        addTask(todoListId, newTaskTitle)
+    }
 
     return (
         <div>
@@ -98,22 +74,7 @@ const Todolist: FC<TodoListPropsType> = ({
                     {title}
                     <button onClick={removeTodolistHandler}>x</button>
                 </h3>
-                <div>
-                    <input
-                        className={inputError ? 'input-error' : undefined}
-                        value={newTaskTitle}
-                        onChange={onChangeSetNewTaskTitle}
-                        onKeyDown={onKeyDownAddTask}
-                    />
-                    <button
-                        disabled={isAddBtnDisabled}
-                        onClick={onClickAddTask}
-                    >+
-                    </button>
-                    <div>
-                        {userMessage}
-                    </div>
-                </div>
+                <AddItemForm onClick={addTaskHandler}/>
                 {tasksList}
                 <div>
                     <button
