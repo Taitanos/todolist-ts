@@ -1,6 +1,7 @@
 import React, {FC} from 'react';
 import {FilterValuesType} from './App';
 import AddItemForm from './AddItemForm';
+import EditableSpan from './EditableSpan';
 
 type TodoListPropsType = {
     todoListId: string
@@ -12,7 +13,8 @@ type TodoListPropsType = {
     addTask: (todoListId: string, title: string) => void
     changeTaskStatus: (todolistId: string, taskID: string, isDone: boolean) => void
     removeTodolist: (todolistId: string) => void
-    //changeTaskTitle: (todoListId: string, taskID: string, title: string) => void
+    updateTask: (todoListsId:string, taskId:string, newTitle: string) => void
+    updateTodoList: (todoListsId:string, title: string) => void
 }
 
 export type TaskType = {
@@ -30,25 +32,39 @@ const Todolist: FC<TodoListPropsType> = ({
                                              changeFilter,
                                              addTask,
                                              changeTaskStatus,
+                                             updateTask,
                                              removeTodolist,
-                                             //changeTaskTitle
+                                             updateTodoList,
                                          }) => {
 
+    // Функции
+    const removeTodolistHandler = () => removeTodolist(todoListId)
+
+    const addTaskHandler = (newTaskTitle:string) => {
+        addTask(todoListId, newTaskTitle)
+    }
+    const updateTodoListHandler = (newTitle: string) => {
+        updateTodoList(todoListId, newTitle)
+    }
+
+    const updateTaskHandler = (tId: string, newTitle: string) => {
+        updateTask(todoListId, tId , newTitle)
+        /*updateTask(todoListId, t.id, newTitle)*/
+    }
 
     // проходим по массиву заданий и рисуем их
     const listItems: Array<JSX.Element> = tasks.map(t => {
         const onClickRemoveTaskHandler = () => removeTask(todoListId, t.id)
         const onChangeTaskStatusHandler = (e: React.ChangeEvent<HTMLInputElement>) => changeTaskStatus(todoListId, t.id, e.currentTarget.checked)
-        //const onChangeTitleHandler = (newValue: string) => changeTaskTitle(todoListId, t.id, newValue)
 
         return (
-            <li key={t.id}>
+            <li key={t.id} className={t.isDone ? 'task-done' : 'task'}>
                 <input
                     onChange={onChangeTaskStatusHandler}
                     type="checkbox"
                     checked={t.isDone}
                 />
-                <span className={t.isDone ? 'task-done' : 'task'}>{t.title}</span>
+                <EditableSpan title={t.title} onClick={(title) => updateTaskHandler(t.id, title)}></EditableSpan>
                 <button onClick={onClickRemoveTaskHandler}>x</button>
             </li>
         )
@@ -60,18 +76,11 @@ const Todolist: FC<TodoListPropsType> = ({
         : <span>Your taskList is empty</span>
 
 
-    // Функции
-    const removeTodolistHandler = () => removeTodolist(todoListId)
-
-    const addTaskHandler = (newTaskTitle:string) => {
-        addTask(todoListId, newTaskTitle)
-    }
-
     return (
         <div>
             <div className="todolist">
                 <h3>
-                    {title}
+                    <EditableSpan title={title} onClick={updateTodoListHandler}></EditableSpan>
                     <button onClick={removeTodolistHandler}>x</button>
                 </h3>
                 <AddItemForm onClick={addTaskHandler}/>

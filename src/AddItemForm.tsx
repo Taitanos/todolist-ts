@@ -6,30 +6,30 @@ type AddItemFormType = {
 
 const AddItemForm: FC<AddItemFormType> = ({onClick}) => {
 
-    const [newTaskTitle, setNewTaskTitle] = useState('')
+    const [newTitle, setNewTitle] = useState('')
     const [inputError, setInputError] = useState(false)
 
     const onClickAddTask = () => {
-        onClick(newTaskTitle)
-        setNewTaskTitle('')
+        onClick(newTitle)
+        setNewTitle('')
     }
 
-    const onChangeSetNewTaskTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const onChangeSetNewTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
         const trimmedTitle = e.target.value.trim()
         if (trimmedTitle || e.target.value.length === 0) {
             inputError && setInputError(false)
-            setNewTaskTitle(trimmedTitle)
+            setNewTitle(trimmedTitle)
         } else {
             setInputError(true)
         }
     }
 
     const onKeyDownAddTask = (e: React.KeyboardEvent<HTMLInputElement>) => e.key === 'Enter' && onClickAddTask()
-    const isAddBtnDisabled = !newTaskTitle || newTaskTitle.length >= 15
+    const isAddBtnDisabled = !newTitle || newTitle.length >= 15
 
     const userMessage = inputError
         ? <span style={{color: 'red'}}>Your title is too empty</span>
-        : newTaskTitle.length < 15
+        : newTitle.length < 15
             ? <span>Enter new title</span>
             : <span style={{color: 'red'}}>Your title is too long</span>
 
@@ -37,8 +37,8 @@ const AddItemForm: FC<AddItemFormType> = ({onClick}) => {
         <div>
             <input
                 className={inputError ? 'input-error' : undefined}
-                value={newTaskTitle}
-                onChange={onChangeSetNewTaskTitle}
+                value={newTitle}
+                onChange={onChangeSetNewTitle}
                 onKeyDown={onKeyDownAddTask}
             />
             <button
