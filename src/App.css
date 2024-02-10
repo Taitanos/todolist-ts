@@ -1,20 +1,6 @@
 .App {
-  padding: 30px;
-  display: flex;
   background-color: darkgrey;
   height: 100vh;
-}
-
-.App > div {
-  margin-right: 50px;
-}
-
-.todolist {
-  border: 2px solid gray;
-  background-color: cadetblue;
-  border-radius: 5px;
-  padding: 15px;
-  height: max-content;
 }
 
 .task{
@@ -24,13 +10,6 @@
 .task-done {
   text-decoration: line-through;
   opacity: 0.5;
-}
-
-.btn-active {
-  background-color: chocolate;
-  color: wheat;
-  border-radius: 3px;
-  border: 2px solid chocolate;
 }
 
 .input-error {
