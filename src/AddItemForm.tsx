@@ -1,4 +1,7 @@
 import React, {FC, useState} from 'react';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+
 
 type AddItemFormType = {
     onClick: (title: string) => void
@@ -33,22 +36,29 @@ const AddItemForm: FC<AddItemFormType> = ({onClick}) => {
             ? <span>Enter new title</span>
             : <span style={{color: 'red'}}>Your title is too long</span>
 
+    //Стили
+    const styleButton = {
+        maxWidth: '30px',
+        maxHeight: '30px',
+        minWidth: '30px',
+        minHeight: '30px',
+        margin: '5px'
+    }
+
     return (
         <div>
-            <input
-                className={inputError ? 'input-error' : undefined}
+            <TextField
+                error={inputError}
+                label={userMessage}
                 value={newTitle}
                 onChange={onChangeSetNewTitle}
                 onKeyDown={onKeyDownAddTask}
+                size="small"
+                id="standard-basic"
+                variant="standard"
             />
-            <button
-                disabled={isAddBtnDisabled}
-                onClick={onClickAddTask}
-            >+
-            </button>
-            <div>
-                {userMessage}
-            </div>
+            <Button disabled={isAddBtnDisabled} onClick={onClickAddTask} variant="contained"
+                    style={styleButton}>+</Button>
         </div>
     )
 }
