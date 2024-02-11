@@ -5,7 +5,7 @@ import EditableSpan from './EditableSpan';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
+import SuperCheckBox from './components/SuperCheckBox';
 
 
 type TodoListPropsType = {
@@ -54,6 +54,11 @@ const Todolist: FC<TodoListPropsType> = ({
     const updateTaskHandler = (tId: string, newTitle: string) => {
         updateTask(todoListId, tId , newTitle)
     }
+
+    const onChangeTaskStatusHandler = (tId: string, isDone: boolean ) => {
+        changeTaskStatus(todoListId, tId, isDone)
+    }
+
     const onAllClickHandler = () => changeFilter(todoListId, 'all')
     const onActiveClickHandler = () => changeFilter(todoListId, 'active')
     const onCompletedClickHandler = () => changeFilter(todoListId, 'completed')
@@ -61,11 +66,10 @@ const Todolist: FC<TodoListPropsType> = ({
     // проходим по массиву заданий и рисуем их
     const listItems: Array<JSX.Element> = tasks.map(t => {
         const onClickRemoveTaskHandler = () => removeTask(todoListId, t.id)
-        const onChangeTaskStatusHandler = (e: React.ChangeEvent<HTMLInputElement>) => changeTaskStatus(todoListId, t.id, e.currentTarget.checked)
 
         return (
             <li key={t.id} className={t.isDone ? 'task-done' : 'task'}>
-                <Checkbox onChange={onChangeTaskStatusHandler} checked={t.isDone}/>
+                <SuperCheckBox isDone={t.isDone} changeTaskStatus={(isDone) => onChangeTaskStatusHandler(t.id, isDone)}/>
                 <EditableSpan title={t.title} onClick={(title) => updateTaskHandler(t.id, title)}></EditableSpan>
                 <IconButton onClick={onClickRemoveTaskHandler} aria-label="delete"><DeleteIcon /></IconButton>
             </li>
