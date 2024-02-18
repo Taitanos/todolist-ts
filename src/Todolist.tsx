@@ -1,5 +1,5 @@
 import React, {FC} from 'react';
-import {FilterValuesType} from './App';
+import {FilterValues} from './App';
 import AddItemForm from './AddItemForm';
 import EditableSpan from './EditableSpan';
 import IconButton from '@mui/material/IconButton';
@@ -8,13 +8,13 @@ import Button from '@mui/material/Button';
 import SuperCheckBox from './components/SuperCheckBox';
 
 
-type TodoListPropsType = {
+type TodoListProps = {
     todoListId: string
     title: string
-    tasks: Array<TaskType>
-    filter: FilterValuesType
+    tasks: Array<Task>
+    filter: FilterValues
     removeTask: (todoListId: string, taskId: string) => void
-    changeFilter: (todoListId: string, nextFilterValue: FilterValuesType) => void
+    changeFilter: (todoListId: string, nextFilterValue: FilterValues) => void
     addTask: (todoListId: string, title: string) => void
     changeTaskStatus: (todolistId: string, taskID: string, isDone: boolean) => void
     removeTodolist: (todolistId: string) => void
@@ -22,13 +22,13 @@ type TodoListPropsType = {
     updateTodoList: (todoListsId:string, title: string) => void
 }
 
-export type TaskType = {
+export type Task = {
     id: string
     title: string
     isDone: boolean
 }
 
-const Todolist: FC<TodoListPropsType> = ({
+const Todolist: FC<TodoListProps> = ({
                                              todoListId,
                                              title,
                                              tasks,

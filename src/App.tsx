@@ -1,20 +1,27 @@
-import React, {useState} from 'react';
+import React, {useReducer, useState} from 'react';
 import './App.css';
-import Todolist, {TaskType} from './Todolist';
+import Todolist, {Task} from './Todolist';
 import AddItemForm from './AddItemForm';
 import ButtonAppBar from './ButtonAppBar';
 import {Container, Grid, Paper} from '@mui/material';
+import {
+    addTodoListAC,
+    changeFilterAC,
+    removeTodolistAC,
+    todolistsReducer,
+    updateTodoListTitleAC
+} from './state/todolist-reducer';
 
-export type FilterValuesType = 'all' | 'active' | 'completed'
+export type FilterValues = 'all' | 'active' | 'completed'
 
-type TodoListsType = {
+export type TodoLists = {
     id: string,
     title: string,
-    filter: FilterValuesType
+    filter: FilterValues
 }
 
-type TasksStatusType = {
-    [key: string]: TaskType[]
+export type TasksStatus = {
+    [key: string]: Task[]
 }
 
 function App() {
@@ -22,13 +29,12 @@ function App() {
     let todoListId1 = crypto.randomUUID()
     let todoListId2 = crypto.randomUUID()
 
-    // Состояния
-    const [todoLists, setTodoLists] = useState<TodoListsType[]>([
+    const [todoLists, dispatchTodoLists] = useReducer(todolistsReducer, [
         {id: todoListId1, title: 'What to learn', filter: 'all'},
         {id: todoListId2, title: 'What to buy', filter: 'all'},
     ])
 
-    const [tasks, setTasks] = useState<TasksStatusType>({
+    const [tasks, setTasks] = useState<TasksStatus>({
         [todoListId1]: [
             {id: crypto.randomUUID(), title: 'HTML&CSS', isDone: true,},
             {id: crypto.randomUUID(), title: 'JS/TS', isDone: true,},
@@ -43,19 +49,20 @@ function App() {
 
     // Функции для тудулиста
     const addTodoList = (title: string) => {
-        const newTodoId = crypto.randomUUID()
-        const newTodo: TodoListsType = {id: newTodoId, title, filter: 'all'}
-        setTodoLists([...todoLists, newTodo])
-        setTasks({...tasks, [newTodoId]: []})
+        dispatchTodoLists(addTodoListAC(title))
+    }
+
+    const changeFilter = (todoListId: string, newFilterValue: FilterValues) => {
+        dispatchTodoLists(changeFilterAC(todoListId, newFilterValue))
     }
 
     const removeTodolist = (todoListId: string) => {
-        setTodoLists(todoLists.filter(tl => tl.id !== todoListId))
+        dispatchTodoLists(removeTodolistAC(todoListId))
         delete tasks[todoListId]
     }
 
-    const updateTodoList = (todoListsId: string, title: string) => {
-        setTodoLists(todoLists.map(tl => tl.id === todoListsId ? {...tl, title} : tl))
+    const updateTodoListTitle = (todoListsId: string, title: string) => {
+        dispatchTodoLists(updateTodoListTitleAC(todoListsId,title))
     }
 
 
@@ -68,15 +75,11 @@ function App() {
         setTasks({...tasks, [todoListId]: tasks[todoListId].filter(t => t.id !== taskId)})
     }
 
-    const changeFilter = (todoListId: string, newFilterValue: FilterValuesType) => {
-        setTodoLists(todoLists.map(tl => tl.id === todoListId ? {...tl, filter: newFilterValue} : tl))
-    }
-
     const changeTaskStatus = (todoListId: string, taskID: string, isDone: boolean) => {
         setTasks({...tasks, [todoListId]: tasks[todoListId].map(t => t.id === taskID ? {...t, isDone} : t)})
     }
 
-    const updateTask = (todoListsId: string, taskId: string, title: string) => {
+    const updateTaskTitle = (todoListsId: string, taskId: string, title: string) => {
         setTasks({...tasks, [todoListsId]: tasks[todoListsId].map(t => t.id === taskId ? {...t, title} : t)})
     }
 
@@ -120,9 +123,9 @@ function App() {
                                     changeFilter={changeFilter}
                                     addTask={addTask}
                                     changeTaskStatus={changeTaskStatus}
-                                    updateTask={updateTask}
+                                    updateTask={updateTaskTitle}
                                     removeTodolist={removeTodolist}
-                                    updateTodoList={updateTodoList}
+                                    updateTodoList={updateTodoListTitle}
                                 />
                             </Paper>
                         )
