@@ -13,7 +13,6 @@ type UpdateTaskTitle = ReturnType<typeof updateTaskTitleAC>
 export const tasksReducer = (state: TasksStatus, action: TasksReducer) => {
     switch (action.type) {
         case 'REMOVE-TASK':
-            console.log('state=', [action.payload.todoListId])
             return {
                 ...state,
                 [action.payload.todoListId]: state[action.payload.todoListId].filter(t => t.id !== action.payload.tasksId)

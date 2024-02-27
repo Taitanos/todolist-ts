@@ -1,16 +1,9 @@
-import React, {useReducer, useState} from 'react';
+import React, {useState} from 'react';
 import './App.css';
 import Todolist, {Task} from './Todolist';
 import AddItemForm from './AddItemForm';
 import ButtonAppBar from './ButtonAppBar';
 import {Container, Grid, Paper} from '@mui/material';
-import {
-    addTodoListAC,
-    changeFilterAC,
-    removeTodolistAC,
-    todolistsReducer,
-    updateTodoListTitleAC
-} from './state/todolist-reducer';
 
 export type FilterValues = 'all' | 'active' | 'completed'
 
@@ -29,7 +22,7 @@ function App() {
     let todoListId1 = crypto.randomUUID()
     let todoListId2 = crypto.randomUUID()
 
-    const [todoLists, dispatchTodoLists] = useReducer(todolistsReducer, [
+    const [todoLists, setTodoLists] = useState<TodoLists[]>(   [
         {id: todoListId1, title: 'What to learn', filter: 'all'},
         {id: todoListId2, title: 'What to buy', filter: 'all'},
     ])
@@ -49,20 +42,23 @@ function App() {
 
     // Функции для тудулиста
     const addTodoList = (title: string) => {
-        dispatchTodoLists(addTodoListAC(title))
+        const newTodoId = crypto.randomUUID()
+        const newTodo: TodoLists = {id: newTodoId, title, filter: 'all'}
+        setTodoLists([...todoLists, newTodo])
+        setTasks({...tasks, [newTodoId]: []})
     }
 
     const changeFilter = (todoListId: string, newFilterValue: FilterValues) => {
-        dispatchTodoLists(changeFilterAC(todoListId, newFilterValue))
+        setTodoLists(todoLists.map(tl => tl.id === todoListId ? {...tl, filter: newFilterValue} : tl))
     }
 
     const removeTodolist = (todoListId: string) => {
-        dispatchTodoLists(removeTodolistAC(todoListId))
+        setTodoLists(todoLists.filter(tl => tl.id !== todoListId))
         delete tasks[todoListId]
     }
 
     const updateTodoListTitle = (todoListsId: string, title: string) => {
-        dispatchTodoLists(updateTodoListTitleAC(todoListsId,title))
+        setTodoLists(todoLists.map(tl => tl.id === todoListsId ? {...tl, title} : tl))
     }
 
 
@@ -85,7 +81,7 @@ function App() {
 
     const stylePaper = {
         border: '2px solid gray',
-        backgroundColor: 'cadetblue',
+        backgroundColor: 'aquamarine',
         borderRadius: '5px',
         padding: '25px',
         margin: '15px',
