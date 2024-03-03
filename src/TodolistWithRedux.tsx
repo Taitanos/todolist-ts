@@ -6,20 +6,15 @@ import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Button from '@mui/material/Button';
 import SuperCheckBox from './components/SuperCheckBox';
+import {TasksStatusType, TodoListsType} from './App';
+import {useDispatch, useSelector} from 'react-redux';
+import {AppRootStateType} from './state/store';
+import {addTasksAC, changeTaskStatusAC, removeTasksAC, updateTaskTitleAC} from './state/tasks-reducer';
+import {changeFilterAC, removeTodolistAC, updateTodoListTitleAC} from './state/todolist-reducer';
 
 
 type TodoListProps = {
-    todoListId: string
-    title: string
-    tasks: Array<TaskType>
-    filter: FilterValues
-    removeTask: (todoListId: string, taskId: string) => void
-    changeFilter: (todoListId: string, nextFilterValue: FilterValues) => void
-    addTask: (todoListId: string, title: string) => void
-    changeTaskStatus: (todolistId: string, taskID: string, isDone: boolean) => void
-    removeTodolist: (todolistId: string) => void
-    updateTask: (todoListsId:string, taskId:string, newTitle: string) => void
-    updateTodoList: (todoListsId:string, title: string) => void
+    todoList: TodoListsType
 }
 
 export type TaskType = {
@@ -28,44 +23,45 @@ export type TaskType = {
     isDone: boolean
 }
 
-const Todolist: FC<TodoListProps> = ({
-                                             todoListId,
-                                             title,
-                                             tasks,
-                                             filter,
-                                             removeTask,
-                                             changeFilter,
-                                             addTask,
-                                             changeTaskStatus,
-                                             updateTask,
-                                             removeTodolist,
-                                             updateTodoList,
-                                         }) => {
+const TodolistWithRedux: FC<TodoListProps> = ({todoList}) => {
+
+    const {id, title, filter} = todoList
+
+    let tasks = useSelector<AppRootStateType, Array<TaskType>>(state => state.tasks[id])
+
+    const dispatch = useDispatch()
 
     // Функции
-    const removeTodolistHandler = () => removeTodolist(todoListId)
+    const removeTodolistHandler = () => dispatch(removeTodolistAC(id))
 
     const addTaskHandler = (newTaskTitle:string) => {
-        addTask(todoListId, newTaskTitle)
+        dispatch(addTasksAC(id, newTaskTitle))
     }
     const updateTodoListHandler = (newTitle: string) => {
-        updateTodoList(todoListId, newTitle)
+        dispatch(updateTodoListTitleAC(id, newTitle))
     }
-    const updateTaskHandler = (tId: string, newTitle: string) => {
-        updateTask(todoListId, tId , newTitle)
-    }
-
-    const onChangeTaskStatusHandler = (tId: string, isDone: boolean ) => {
-        changeTaskStatus(todoListId, tId, isDone)
+    const updateTaskHandler = (taskId: string, newTitle: string) => {
+        dispatch(updateTaskTitleAC(id, taskId, newTitle))
     }
 
-    const onAllClickHandler = () => changeFilter(todoListId, 'all')
-    const onActiveClickHandler = () => changeFilter(todoListId, 'active')
-    const onCompletedClickHandler = () => changeFilter(todoListId, 'completed')
+    const onChangeTaskStatusHandler = (taskId: string, isDone: boolean ) => {
+        dispatch(changeTaskStatusAC(id, taskId, isDone))
+    }
+
+    const onAllClickHandler = () => dispatch(changeFilterAC(id, 'all'))
+    const onActiveClickHandler = () => dispatch(changeFilterAC(id, 'active'))
+    const onCompletedClickHandler = () => dispatch(changeFilterAC(id, 'completed'))
+
+    if (filter === 'active') {
+        tasks = tasks.filter(t => !t.isDone);
+    }
+    if (filter === 'completed') {
+        tasks = tasks.filter(t => t.isDone);
+    }
 
     // проходим по массиву заданий и рисуем их
     const listItems: Array<JSX.Element> = tasks.map(t => {
-        const onClickRemoveTaskHandler = () => removeTask(todoListId, t.id)
+        const onClickRemoveTaskHandler = () => dispatch(removeTasksAC(id, t.id))
 
         return (
             <li key={t.id} className={t.isDone ? 'task-done' : 'task'}>
@@ -107,4 +103,4 @@ const Todolist: FC<TodoListProps> = ({
     )
 }
 
-export default Todolist;
+export default TodolistWithRedux;
